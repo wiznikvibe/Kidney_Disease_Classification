@@ -9,8 +9,10 @@ project_name = "src"
 list_of_files = [
     ".github/workflows/.gitkeep",
     f"{project_name}/__init__.py",
+    f"{project_name}/logger.py",
+    f"{project_name}/exception.py",
     f"{project_name}/components/__init__.py",
-    f"{project_name}/utils/__init__.py",
+    f"{project_name}/utils.py",
     f"{project_name}/config/__init__.py",
     f"{project_name}/config/configuration.py",
     f"{project_name}/pipeline/__init__.py",
