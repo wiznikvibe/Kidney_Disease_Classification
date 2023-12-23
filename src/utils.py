@@ -55,3 +55,24 @@ def load_json(path: Path) -> ConfigBox:
 def save_bin(data:Any, path: Path):
     joblib.dump(value=data, filename=path)
     logging.info(f"Binary file saved at: {path}")
+
+@ensure_annotations
+def load_bins(path:Path)-> Any:
+    data = joblib.load(path)
+    logging.info(f"Binary file loaded from: {path}")
+    return data 
+
+@ensure_annotations
+def get_size(path: Path) -> str:
+    size_kbs = round(os.path.getsize(path)/1024)
+    return f"~ {size_kbs} KB"
+
+def decodeImage(imgstring, filename):
+    imgdata = base64.b64decode(imgstring)
+    with open(filename, "wb") as f:
+        f.write(imgdata)
+        f.close()
+
+def encodeImgIntoBase64(croppedImgPath):
+    with open(croppedImgPath, "rb") as f:
+        return base64.b64encode(f.read())
