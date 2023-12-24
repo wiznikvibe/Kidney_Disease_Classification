@@ -1,78 +1,43 @@
-import os, sys 
-from box.exceptions import BoxValueError
-import yaml 
-from src.logger import logging
-from src.exception import CustomException
-import json
-import joblib 
-from ensure import ensure_annotations
-from box import ConfigBox
-from pathlib import Path 
-from typing import Any 
+import yaml
 import base64
+import os, sys 
+from src.logger import logging 
+from src.exception import CustomException
 
-
-@ensure_annotations
-def read_yaml(file_path: Path)-> ConfigBox:
-
+def read_yaml_file(file_path: str) -> dict:
     try:
-        with open(file_path) as yaml_file:
-            content = yaml.safe_load(yaml_file)
-            logging.info(f"yaml_file: {file_path} loaded successfully")
-            return ConfigBox(content)
+        with open(file_path, "rb") as yaml_file:
+            logging.info("Read yaml file successfully")
+            return yaml.safe_load(yaml_file)
 
-    except BoxValueError:
-        raise ValueError("yaml file is empty")
     except Exception as e:
         raise CustomException(e, sys)
 
+def write_yaml_file(file_path:str, content: object, replace: bool = False)-> None:
+    try:
+        if replace:
+            if os.path.exists(file_path):
+                os.remove(file_path)
 
-@ensure_annotations
-def create_directories(path_list: list, verbose=True):
-    
-    for path in path_list:
-        os.makedirs(path, exist_ok=True)
-        if verbose:
-            logging.info(f"created directory at: {path}")
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-@ensure_annotations
-def save_json(path:Path, data:dict):
+        with open(file_path, "w") as file:
+            yaml.dump(content, file)
+            logging.info("Successfully write_yaml_file")
 
-    with open(path, "w") as f:
-        json.dump(data, f, indent=4)
-    logging.info(f"Json File Saved At: { path}")
+    except Exception as e:
+        raise CustomException(e, sys)
 
-@ensure_annotations
-def load_json(path: Path) -> ConfigBox:
-
-    with open(path) as f:
-        content = json.load(f)
-
-    logging.info(f"json file loaded successfully from: {path}")
-    return ConfigBox(content) 
-
-@ensure_annotations
-def save_bin(data:Any, path: Path):
-    joblib.dump(value=data, filename=path)
-    logging.info(f"Binary file saved at: {path}")
-
-@ensure_annotations
-def load_bins(path:Path)-> Any:
-    data = joblib.load(path)
-    logging.info(f"Binary file loaded from: {path}")
-    return data 
-
-@ensure_annotations
-def get_size(path: Path) -> str:
-    size_kbs = round(os.path.getsize(path)/1024)
-    return f"~ {size_kbs} KB"
-
-def decodeImage(imgstring, filename):
+def decodeImage(imgstring, fileName):
     imgdata = base64.b64decode(imgstring)
-    with open(filename, "wb") as f:
+    with open("./data/" + fileName, 'wb') as f:
         f.write(imgdata)
         f.close()
 
-def encodeImgIntoBase64(croppedImgPath):
-    with open(croppedImgPath, "rb") as f:
+
+def encodeImageIntoBase64(croppedImagePath):
+    with open(croppedImagePath, "rb") as f:
         return base64.b64encode(f.read())
+
+
+    
