@@ -3,7 +3,7 @@ import gdown
 import zipfile
 from src.exception import CustomException
 from src.logger import logging 
-from src.entity.config_entity import DataIngestionConfig
+from src.entity.config_entity import ZIP_FILE_NAME,DataIngestionConfig
 from src.entity.artifacts_entity import DataIngestionArtifact
 
 
@@ -14,14 +14,16 @@ class DataIngestion:
 
     def download_file(self)-> str:
         try:
-            dataset_url = self.data_ingestion_config.dataset_link
+            dataset_id = self.data_ingestion_config.file_id
             zip_file_dir = self.data_ingestion_config.feature_store_dir
             os.makedirs(self.data_ingestion_config.feature_store_dir, exist_ok=True)
+            output_file_path = os.path.join(zip_file_dir, ZIP_FILE_NAME)
 
-            logging.info(f"Downloading Data from {dataset_url} into file {zip_file_dir}")
-            gdown.download(dataset_url, zip_file_dir)
-            logging.info(f"Zip File extracted from link: {dataset_url} into {zip_file_dir}")
-            return zip_file_dir
+            logging.info(f"Downloading Data from {self.data_ingestion_config.prefix+dataset_id} into file {output_file_path}")
+
+            gdown.download(self.data_ingestion_config.prefix+dataset_id, output_file_path)
+            logging.info(f"Zip File extracted from link: {self.data_ingestion_config.prefix+dataset_id} into {output_file_path}")
+            return output_file_path
         except Exception as e:
             raise CustomException(e, sys)
 
@@ -29,6 +31,7 @@ class DataIngestion:
     def extract_zip_file(self, zip_file_path: str):
         unzip_file_dir = self.data_ingestion_config.data_unzip_dir
         os.makedirs(unzip_file_dir, exist_ok=True)
+        logging.info(zip_file_path)
         with zipfile.ZipFile(zip_file_path, 'r') as zip_file:
             zip_file.extractall(unzip_file_dir)
 
