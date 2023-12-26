@@ -16,4 +16,8 @@ class DataIngestionConfig:
         self.feature_store_dir = os.path.join(self.data_ingestion_dir,"feature_store",ZIP_FILE_NAME)
         self.data_unzip_dir = os.path.join(self.data_ingestion_dir, "data")
         
-    
+class ModelTrainerConfig:
+
+    def __init__(self, training_pipeline_config:TrainingPipelineConfig):
+        self.model_trainer_dir = os.path.join(training_pipeline_config.artifact_dir, "model_trainer")
+        self.categories = ['Cyst','Normal', 'Tumor']
