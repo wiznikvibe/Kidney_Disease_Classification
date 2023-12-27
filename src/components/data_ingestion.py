@@ -1,6 +1,7 @@
 import os, sys 
 import gdown
 import zipfile
+import splitfolders
 from src.exception import CustomException
 from src.logger import logging 
 from src.entity.config_entity import ZIP_FILE_NAME,DataIngestionConfig
@@ -37,13 +38,21 @@ class DataIngestion:
 
         return unzip_file_dir
 
+    def train_test_val_split(self, image_directory:str):
+        output_dir = os.path.join(self.data_ingestion_config.train_test_val_dir)
+        splitfolders.ratio(image_directory, output=output_dir, seed=42, ratio=self.data_ingestion_config.split_ratio)
+        return output_dir
+
     def initiate_data_ingestion(self,)-> DataIngestionArtifact:
         try:
             zip_file_path = self.download_file()
             feature_store_path = self.extract_zip_file(zip_file_path)
+            train_test_val_path = self.train_test_val_split(feature_store_path)
+
 
             data_ingestion_artifact = DataIngestionArtifact(
-                data_unzip_dir = feature_store_path
+                data_unzip_dir = feature_store_path,
+                output_dir = train_test_val_path
             )   
 
             return data_ingestion_artifact    
