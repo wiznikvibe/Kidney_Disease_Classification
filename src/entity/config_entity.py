@@ -29,9 +29,10 @@ class ModelTrainerConfig:
         self.model_trainer_dir = os.path.join(training_pipeline_config.artifact_dir, "model_trainer")
         self.trained_model_dir = os.path.join(self.model_trainer_dir, 'model', MODEL_FILE_NAME)
         self.prod_model_dir = os.path.join(os.getcwd(), 'saved_model', MODEL_FILE_NAME)
-        self.train_data_dir = os.path.join(self.model_trainer_dir,"training_data")
+        # self.train_data_dir = os.path.join(self.model_trainer_dir,"training_data")
         self.categories = ['Cyst','Normal', 'Tumor']
         self.IMAGE_SIZE = (256, 256)
         self.BATCH_SIZE = 32
         self.EPOCHS = 5
+        self.VALIDATION_STEP = 3 
 
