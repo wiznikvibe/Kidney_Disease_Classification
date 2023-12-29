@@ -48,6 +48,7 @@ class DataIngestion:
         except Exception as e:
             raise CustomException(e, sys)
 
+
     def train_test_val_split(self, image_directory:str):
         try:
             output_dir = self.data_ingestion_config.train_test_val_dir
