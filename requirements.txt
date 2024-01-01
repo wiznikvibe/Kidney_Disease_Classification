@@ -18,4 +18,9 @@ Flask-Cors
 gdown
 ipykernel
 split-folders
+fastapi
+uvicorn
+pillow
+python-multipart
+tensorflow-serving-api==2.5.0
 -e .

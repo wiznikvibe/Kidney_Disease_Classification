@@ -1,18 +1,31 @@
-import os, sys 
-from src.entity import config_entity, artifacts_entity
-from src.components.data_ingestion import DataIngestion
-from src.components.model_trainer import ModelTrainer
+from fastapi import FastAPI, File, UploadFile
+import uvicorn
+import numpy as np
+from io import BytesIO
+from PIL import Image
+
+app = FastAPI()
+
+def read_file_as_image(data)->np.ndarray:
+    imagebytes = np.array(Image.open(BytesIO(data)))
+    return imagebytes
+
+
+@app.get("/")
+async def home():
+    return "This is Home"
+
+
+@app.post("/predict")
+async def predict(file: UploadFile=File(...)):
+    image = read_file_as_image(await file.read())
+    
+    return f"{image}"
+
+
+
+
 
 
 if __name__ == '__main__':
-    training_pipeline_config = config_entity.TrainingPipelineConfig()
-
-    data_ingestion_config =config_entity.DataIngestionConfig(training_pipeline_config=training_pipeline_config)
-    data_ingestion = DataIngestion(data_ingestion_config)
-    data_ingestion_artifact = data_ingestion.initiate_data_ingestion()
-    print(data_ingestion_artifact)
-
-    model_trainer_config = config_entity.ModelTrainerConfig(training_pipeline_config=training_pipeline_config)
-    model_trainer = ModelTrainer(model_trainer_config, data_ingestion_artifact)
-    model_trainer_artifact = model_trainer.train() 
-    print(model_trainer_artifact)
+    uvicorn.run(app, host='localhost', port=8000)
