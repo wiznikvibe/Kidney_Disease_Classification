@@ -5,6 +5,7 @@ import uvicorn
 import numpy as np
 from io import BytesIO
 import tensorflow as tf
+from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
 
 app = FastAPI()
@@ -15,18 +16,20 @@ CLASS_LABELS = ['Cyst', 'Normal', 'Tumor']
 
 def preprocess_image(img):
     img = img.resize((256,256))
-    img_array = np.array(img)
+    img_array = img_to_array(img)
     img_array = img_array / 255.0
     img_array = np.expand_dims(img_array, axis=0)
     return img_array
 
-
+@app.get("/")
+async def home():
+    return {"Welcome to Kidney Disease Classification"}
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile=File(...)):
     try:
         contents = await file.read()
-        img = Image.open(BytesIO(contents))
+        img = Image.open(BytesIO(contents)).convert("RGB")
 
         img_array = preprocess_image(img)
 
