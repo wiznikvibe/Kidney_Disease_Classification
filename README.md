@@ -15,5 +15,8 @@ Describe the dataset you used for training and testing your model. Include detai
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/kidney-image-classification.git
+   git clone https://github.com/wiznikvibe/kidney-image-classification.git
    cd kidney-image-classification
+   # For Training Model
+      conda activate venv/
+      python main.py
